@@ -10,7 +10,7 @@ namespace astar_path_finder
 {
     class AStarPathFinder
     {
-        public List<string> SolvePath()
+        public List<string> SolvePath(double startLon,double startLat,double endLon,double endLat)
         {
 
 
@@ -21,11 +21,6 @@ namespace astar_path_finder
 
             Graph oceanGrapc = new Graph();
             FillOceanGraphWithMask(oceanGrapc, asc,80,-80);
-
-            double startLon = 122.12;
-            double startLat = 31;
-            double endLon = 116;
-            double endLat = 6;
 
 
             int startRowKey = asc.getYIndex(startLat);
