@@ -10,17 +10,30 @@ namespace astar_path_finder
 {
     class AStarPathFinder
     {
+
+
+
+        private AscFile asc;
+        private Graph oceanGraph;
+
+        public AStarPathFinder(string ascfile)
+        {
+            asc = new AscFile(ascfile);
+            asc.ReadIntValues();
+            asc.Dispose();
+
+            oceanGraph = new Graph();
+            FillOceanGraphWithMask(oceanGraph, asc, 80, -80);
+        }
+
+
+
         public List<string> SolvePath(double startLon,double startLat,double endLon,double endLat)
         {
 
 
-            string mask_asc = ConfigurationManager.AppSettings["mask"];
-            AscFile asc = new AscFile(mask_asc);
-            asc.ReadIntValues();
-            asc.Dispose();
-
-            Graph oceanGrapc = new Graph();
-            FillOceanGraphWithMask(oceanGrapc, asc,80,-80);
+         
+        
 
 
             int startRowKey = asc.getYIndex(startLat);
@@ -32,9 +45,18 @@ namespace astar_path_finder
             string destinationPortKey = endRowKey + "-" + endColumnKey;
 
 
-            Node startPort = oceanGrapc.Nodes[startPortKey];
+            Node startPort = oceanGraph.Nodes[startPortKey];
 
-            Node destinationPort = oceanGrapc.Nodes[destinationPortKey];
+            if (startPort == null)
+            {
+                throw new Exception("出发港口不在预定义的海洋边界内");
+            }
+
+            Node destinationPort = oceanGraph.Nodes[destinationPortKey];
+            if (destinationPort == null)
+            {
+                throw new Exception("目的港口不在预定义的海洋边界内");
+            }
 
             Func<Node, Node, double> distance = (node1, node2) =>
                                                    node1.Neighbors.Cast<EdgeToNeighbor>().Single(
